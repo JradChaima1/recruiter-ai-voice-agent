@@ -53,7 +53,7 @@ export default function Home() {
               <div className="flex-1 flex justify-center">
                 <div className="relative w-full max-w-md aspect-square bg-purple-500/20 backdrop-blur-sm rounded-lg p-8 border border-purple-500/30">
                   <Image 
-                    src="/globe.svg" 
+                    src="/ai-recruiter.png" 
                     alt="AI Voice Technology" 
                     fill 
                     className="object-contain p-8"

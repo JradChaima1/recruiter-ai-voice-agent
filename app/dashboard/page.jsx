@@ -1,12 +1,36 @@
+'use client'
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useUser } from "@/app/provider";
 
 export default function Dashboard() {
+  const { user, loading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-blue-700 text-white flex items-center justify-center">
+      Loading...
+    </div>
+  }
+
+  if (!user) {
+    return null; // This prevents the dashboard from flashing before redirect
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-700 via-purple-600 to-blue-700 text-white">
       {/* Header */}
       <header className="py-4 px-6 flex justify-between items-center">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ">
           <div className="bg-purple-500 rounded-md p-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
@@ -16,8 +40,8 @@ export default function Dashboard() {
           </div>
           <span className="font-bold text-xl">VoiceRecruit AI</span>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="bg-white rounded-md px-4 py-2 text-black">
+        <div className="flex items-center gap-2">
+          <div className="bg-white rounded-md px-2 py-2 text-black">
             Search...
           </div>
           <Button className="bg-purple-500 hover:bg-purple-600">
@@ -27,11 +51,61 @@ export default function Dashboard() {
             </svg>
             New Campaign
           </Button>
+          
+          {/* User Profile Section */}
+          {user && (
+            <div className="flex items-center gap-2 bg-purple-800/40 backdrop-blur-sm rounded-lg p-2 border border-purple-500/20">
+              {user.picture ? (
+                <Image 
+                  src={user.picture} 
+                  alt={user.name || 'User'} 
+                  width={32} 
+                  height={32} 
+                  className="rounded-full"
+                />
+              ) : (
+                <div className="bg-purple-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                  {user.name ? user.name.charAt(0).toUpperCase() : '?'}
+                </div>
+              )}
+              <div className="hidden md:block">
+                <div className="font-medium text-sm">{user.name || 'Guest User'}</div>
+                <div className="text-xs text-purple-300">{user.email || 'Not signed in'}</div>
+                <div className="text-xs text-purple-300">Credits: {user.credits || 0}</div>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
       {/* Main Content */}
       <main className="px-6 py-8">
+        {/* User Welcome Card */}
+        {user && (
+          <div className="mb-8 bg-purple-800/30 backdrop-blur-sm rounded-lg p-6 border border-purple-500/20">
+            <div className="flex items-center gap-4 mb-4">
+              {user.picture ? (
+                <Image 
+                  src={user.picture} 
+                  alt={user.name || 'User'} 
+                  width={48} 
+                  height={48} 
+                  className="rounded-full"
+                />
+              ) : (
+                <div className="bg-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl">
+                  {user.name ? user.name.charAt(0).toUpperCase() : '?'}
+                </div>
+              )}
+              <div>
+                <h2 className="text-2xl font-bold">Welcome, {user.name || 'User'}!</h2>
+                <p className="text-purple-200">Your AI-powered recruitment assistant is ready</p>
+                <p className="text-purple-200 text-sm mt-1">Available Credits: {user.credits || 0}</p>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Interview Dashboard</h1>
           <p className="text-purple-200">Manage your AI-powered interviews and screening calls</p>
@@ -136,7 +210,7 @@ export default function Dashboard() {
             
             <div className="space-y-4">
               {/* Alex Johnson */}
-              <div className="flex items-center justify-between p-4 bg-purple-700/30 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-purple-700/30 hover:bg-purple-700/40 transition-colors duration-200 rounded-lg cursor-pointer">
                 <div className="flex items-center gap-4">
                   <div className="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold">
                     A
@@ -160,7 +234,7 @@ export default function Dashboard() {
               </div>
               
               {/* Sarah Wilson */}
-              <div className="flex items-center justify-between p-4 bg-purple-700/30 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-purple-700/30 hover:bg-purple-700/40 transition-colors duration-200 rounded-lg cursor-pointer">
                 <div className="flex items-center gap-4">
                   <div className="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold">
                     S
@@ -184,7 +258,7 @@ export default function Dashboard() {
               </div>
               
               {/* Mike Chen */}
-              <div className="flex items-center justify-between p-4 bg-purple-700/30 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-purple-700/30 hover:bg-purple-700/40 transition-colors duration-200 rounded-lg cursor-pointer">
                 <div className="flex items-center gap-4">
                   <div className="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold">
                     M
@@ -204,7 +278,7 @@ export default function Dashboard() {
               </div>
               
               {/* Emma Davis */}
-              <div className="flex items-center justify-between p-4 bg-purple-700/30 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-purple-700/30 hover:bg-purple-700/40 transition-colors duration-200 rounded-lg cursor-pointer">
                 <div className="flex items-center gap-4">
                   <div className="bg-purple-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold">
                     E
@@ -233,21 +307,21 @@ export default function Dashboard() {
             <div className="mb-6">
               <h2 className="text-xl font-bold mb-4">Scheduled Interviews</h2>
               <div className="space-y-4">
-                <div className="p-3 bg-purple-700/30 rounded-lg">
+                <div className="p-3 bg-purple-700/30 hover:bg-purple-700/40 transition-colors duration-200 rounded-lg cursor-pointer">
                   <div className="font-medium">John Smith</div>
                   <div className="text-sm text-purple-300">Frontend Developer</div>
                   <div className="text-xs text-purple-300 mt-1">Full Interview</div>
                   <div className="text-sm font-medium text-purple-200 mt-2">Today 3:00 PM</div>
                 </div>
                 
-                <div className="p-3 bg-purple-700/30 rounded-lg">
+                <div className="p-3 bg-purple-700/30 hover:bg-purple-700/40 transition-colors duration-200 rounded-lg cursor-pointer">
                   <div className="font-medium">Lisa Brown</div>
                   <div className="text-sm text-purple-300">Marketing Manager</div>
                   <div className="text-xs text-purple-300 mt-1">Phone Screening</div>
                   <div className="text-sm font-medium text-purple-200 mt-2">Tomorrow 10:00 AM</div>
                 </div>
                 
-                <div className="p-3 bg-purple-700/30 rounded-lg">
+                <div className="p-3 bg-purple-700/30 hover:bg-purple-700/40 transition-colors duration-200 rounded-lg cursor-pointer">
                   <div className="font-medium">Robert Taylor</div>
                   <div className="text-sm text-purple-300">DevOps Engineer</div>
                   <div className="text-xs text-purple-300 mt-1">Full Interview</div>
